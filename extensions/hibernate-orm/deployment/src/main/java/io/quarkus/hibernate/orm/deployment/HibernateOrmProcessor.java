@@ -42,6 +42,7 @@ import javax.persistence.spi.PersistenceUnitTransactionType;
 import javax.transaction.TransactionManager;
 
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.hibernate.Interceptor;
 import org.hibernate.MultiTenancyStrategy;
 import org.hibernate.boot.archive.scan.spi.ClassDescriptor;
 import org.hibernate.boot.archive.scan.spi.PackageDescriptor;
@@ -595,7 +596,7 @@ public final class HibernateOrmProcessor {
                 .build());
 
         // Some user-injectable beans are retrieved programmatically and shouldn't be removed
-        unremovableBeans.produce(UnremovableBeanBuildItem.beanTypes(AttributeConverter.class));
+        unremovableBeans.produce(UnremovableBeanBuildItem.beanTypes(AttributeConverter.class, Interceptor.class));
     }
 
     @Consume(InterceptedStaticMethodsTransformersRegisteredBuildItem.class)
