@@ -1033,3 +1033,40 @@ INSERT INTO known_fruits(id, name) VALUES (3, 'Blackberries');
 === Programmatically Resolving Tenants Connections
 
 If you need a more dynamic configuration for the different tenants you want to support and don't want to end up with multiple entries in your configuration file, you can use the `io.quarkus.hibernate.orm.runtime.tenant.TenantConnectionResolver` interface to implement your own logic for retrieving a connection. Creating an application scoped bean that implements this interface will replace the current Quarkus default implementation `io.quarkus.hibernate.orm.runtime.tenant.DataSourceTenantConnectionResolver`. Your custom connection resolver would allow for example to read tenant information from a database and create a connection per tenant at runtime based on it.
+
+[[interceptors]]
+== Interceptors
+
+You can assign an link:{orm-doc-url-prefix}#events-interceptors[`org.hibernate.Interceptor`]
+to your `SessionFactory` by simply defining a CDI bean:
+
+[source,java]
+----
+@ApplicationContext // <1>
+public static class MyInterceptor extends EmptyInterceptor { // <2>
+    @Override
+    public boolean onLoad(Object entity, Serializable id, Object[] state, // <3>
+            String[] propertyNames, Type[] types) {
+        // ...
+        return false;
+    }
+}
+----
+<1> Assign a CDI scope to the interceptor.
+`@ApplicationScoped` will create one instance of the interceptor shared among all sessions;
+`@Dependent` will create one dedicated instance of the interceptor for each session.
+<2> Either extend `org.hibernate.EmptyInterceptor` or implement `org.hibernate.Interceptor` directly.
+<3> Implement methods as necessary.
+
+[TIP]
+====
+By default (when no CDI qualifier is applied), the interceptor is assigned to the default persistence unit.
+
+Use `@io.quarkus.hibernate.orm.PersistenceUnit(name = ...)` to assign the interceptor to a named persistence unit.
+====
+
+[NOTE]
+====
+Due to a limitation in Hibernate ORM itself,
+`@PreDestroy` methods on `@Dependent`-scoped interceptors will never get called.
+====
