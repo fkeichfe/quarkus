@@ -24,7 +24,6 @@ import javax.validation.MessageInterpolator;
 import javax.validation.ParameterNameProvider;
 import javax.validation.TraversableResolver;
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 import javax.validation.executable.ValidateOnExecution;
 import javax.validation.valueextraction.ValueExtractor;
 import javax.ws.rs.Priorities;
@@ -77,6 +76,7 @@ import io.quarkus.hibernate.validator.runtime.HibernateValidatorRecorder;
 import io.quarkus.hibernate.validator.runtime.ValidatorProvider;
 import io.quarkus.hibernate.validator.runtime.interceptor.MethodValidationInterceptor;
 import io.quarkus.hibernate.validator.runtime.jaxrs.ResteasyConfigSupport;
+import io.quarkus.hibernate.validator.runtime.jaxrs.ResteasyReactiveViolationException;
 import io.quarkus.hibernate.validator.runtime.jaxrs.ResteasyReactiveViolationExceptionMapper;
 import io.quarkus.hibernate.validator.spi.BeanValidationAnnotationsBuildItem;
 import io.quarkus.resteasy.common.spi.ResteasyConfigBuildItem;
@@ -353,7 +353,7 @@ class HibernateValidatorProcessor {
     void exceptionMapper(BuildProducer<ExceptionMapperBuildItem> exceptionMapperProducer,
             BuildProducer<ReflectiveClassBuildItem> reflectiveClassProducer) {
         exceptionMapperProducer.produce(new ExceptionMapperBuildItem(ResteasyReactiveViolationExceptionMapper.class.getName(),
-                ValidationException.class.getName(), Priorities.USER + 1, true));
+                ResteasyReactiveViolationException.class.getName(), Priorities.USER + 1, true));
         reflectiveClassProducer.produce(
                 new ReflectiveClassBuildItem(true, true, ResteasyReactiveViolationExceptionMapper.ViolationReport.class,
                         ResteasyReactiveViolationExceptionMapper.ViolationReport.Violation.class));
