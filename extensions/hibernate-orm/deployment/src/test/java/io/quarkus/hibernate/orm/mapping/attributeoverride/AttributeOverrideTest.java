@@ -30,7 +30,8 @@ public class AttributeOverrideTest {
                     .addClass(MappedSuperclassType.class)
                     .addClass(DerivedEntityType.class)
                     .addClass(SchemaUtil.class)
-                    .addClass(SmokeTestUtils.class))
+                    .addClass(SmokeTestUtils.class)
+                    .addAsManifestResource("META-INF/orm-empty.xml", "orm.xml"))
             .withConfigurationResource("application.properties")
             .overrideConfigKey("quarkus.hibernate-orm.log.sql", "true");
 
